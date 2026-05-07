@@ -1,0 +1,15 @@
+@font-face {
+  font-family: "Shick";
+  src: url("../../assets/fonts/AdineKirnberg-Script.ttf");
+
+  font-family: "normal";
+  src: url("../../assets/fonts/RobotoFlex-VariableFont_GRAD\,XOPQ\,XTRA\,YOPQ\,YTAS\,YTDE\,YTFI\,YTLC\,YTUC\,opsz\,slnt\,wdth\,wght.ttf");
+
+  font-family: "fancy";
+  src: url("../../assets/fonts/exmouth_.ttf");
+
+}
+
+body {
+  font-family: "Shick";
+}
