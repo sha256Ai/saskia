@@ -502,6 +502,7 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   overflow: hidden;
+  margin-bottom: 9rem;
 }
 
 /* Blue overlay */
