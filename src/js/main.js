@@ -1,6 +1,12 @@
 // Declare these variables FIRST
+
 let lastHeartTime = 0;
 const heartDelay = 180; // Adjust this value (higher = fewer hearts)
+
+let currentSongIndex = 0;
+const audio = document.getElementById("audioPlayer");
+
+const str_tag = document.querySelector(".romsec__main__strplace");
 
 const romanticSentences = [
   "Guten Morgen, meine Schöne. Jeder Sonnenaufgang erinnert mich an dein Lächeln.",
@@ -44,8 +50,7 @@ const romanticSentences = [
   "Jede Liebesgeschichte ist schön, aber unsere ist meine Lieblingsgeschichte.",
   "Du hattest mich bei 'Hallo' und hast mich seitdem nicht mehr losgelassen.",
 ];
-
-const str_tag = document.querySelector(".romsec__main__strplace");
+const playlist = ["../../assets/songs/1.mp3", "../../assets/songs/2.mp3"];
 
 // Create falling hearts on mouse move
 document.addEventListener("mousemove", function (e) {
@@ -64,6 +69,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Update every second
   setInterval(updateCountUp, 1000);
+
+  // Load first song
+  audio.src = playlist[currentSongIndex];
+
+  // When song ends, play next song
+  audio.addEventListener("ended", playSong);
 });
 
 function createHeart(x, y) {
@@ -136,4 +147,16 @@ function updateCountUp() {
 function returnRomanticSen(inputArray) {
   const randomIndex = Math.floor(Math.random() * inputArray.length);
   str_tag.innerHTML = romanticSentences[randomIndex];
+}
+
+function playSong() {
+  currentSongIndex++;
+
+  // If reached end of playlist, loop back to first song
+  if (currentSongIndex >= playlist.length) {
+    currentSongIndex = 0;
+  }
+
+  audio.src = playlist[currentSongIndex];
+  audio.play();
 }
