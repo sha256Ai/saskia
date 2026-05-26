@@ -1,12 +1,4 @@
-// Declare these variables FIRST
-
-let lastHeartTime = 0;
-const heartDelay = 180; // Adjust this value (higher = fewer hearts)
-
-let currentSongIndex = 0;
-const audio = document.getElementById("audioPlayer");
-
-const str_tag = document.querySelector(".romsec__main__strplace");
+const playlist = ["../assets/songs/1.mp3", "../assets/songs/2.mp3"];
 
 const romanticSentences = [
   "Guten Morgen, meine Schöne. Jeder Sonnenaufgang erinnert mich an dein Lächeln.",
@@ -50,114 +42,172 @@ const romanticSentences = [
   "Jede Liebesgeschichte ist schön, aber unsere ist meine Lieblingsgeschichte.",
   "Du hattest mich bei 'Hallo' und hast mich seitdem nicht mehr losgelassen.",
 ];
-const playlist = ["../assets/songs/1.mp3", "../assets/songs/2.mp3"];
 
-// Create falling hearts on mouse move
-document.addEventListener("mousemove", function (e) {
-  const now = Date.now();
-  if (now - lastHeartTime > heartDelay) {
-    createHeart(e.clientX, e.clientY);
-    lastHeartTime = now;
-  }
-});
+// -------------------------------
+// VARIABLES
+// -------------------------------
+
+let currentSongIndex = 0;
+let lastHeartTime = 0;
+
+const heartDelay = 180;
+
+const audio = document.getElementById("audioPlayer");
+
+const sentenceElement = document.querySelector(".romsec__main__strplace");
+
+// -------------------------------
+// START APP
+// -------------------------------
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Run it immediately
+  setupMusic();
+  setupHearts();
+
   updateCountUp();
-
-  returnRomanticSen(romanticSentences);
-
-  // Update every second
   setInterval(updateCountUp, 1000);
 
-  // Load first song
-  audio.src = playlist[currentSongIndex];
-  audio.play();
-
-  // When song ends, play next song
-  audio.addEventListener("ended", playSong);
+  showRandomSentence();
 });
 
-function createHeart(x, y) {
-  const heart = document.createElement("div");
+// -------------------------------
+// MUSIC PLAYER
+// -------------------------------
 
-  // Use heart emoji or HTML entity
-  heart.innerHTML = "❤️";
-  // Or use different heart variations:
-
-  heart.classList.add("heart-particle");
-
-  // Position at mouse coordinates
-  heart.style.left = x + "px";
-  heart.style.top = y + "px";
-
-  // Random horizontal drift (px)
-  const randomXDrift = (Math.random() - 0.5) * 60;
-  // Random vertical distance
-  const randomYFall = 20 + Math.random() * 100;
-
-  heart.style.setProperty("--x-offset", randomXDrift + "px");
-  heart.style.setProperty("--y-offset", randomYFall + "px");
-
-  // Random size variation
-  const size = 12 + Math.random() * 14; // Changed from 2 to 12 (so hearts are visible)
-  heart.style.fontSize = size + "px";
-
-  // Random rotation
-  const randomRotate = (Math.random() - 0.5) * 60;
-
-  document.body.appendChild(heart);
-
-  // Remove heart after animation ends
-  setTimeout(() => {
-    heart.remove();
-  }, 1200);
-}
-
-function updateCountUp() {
-  // Set the special date: February 20 at 19:40
-  let specialDate = new Date(2026, 1, 20, 19, 40, 0); // Year, Month (0=Jan, 1=Feb), Day, Hour, Minute, Second
-
-  let now = new Date();
-
-  // If the special date is in the future, show 0 (or handle gracefully)
-  if (now < specialDate) {
-    document.querySelector(".clock__main__day__digit").innerText = "0";
-    document.querySelector(".clock__main__hour__digit").innerText = "0";
-    document.querySelector(".clock__main__min__digit").innerText = "0";
-    document.querySelector(".clock__main__sec__digit").innerText = "0";
+function setupMusic() {
+  if (!audio) {
+    console.error("Audio element not found!");
     return;
   }
 
-  let diff = now - specialDate; // difference in milliseconds (now - past date)
+  // Load first song
+  audio.src = playlist[currentSongIndex];
 
-  // Calculate days, hours, minutes, seconds
-  let totalSeconds = Math.floor(diff / 1000);
-  let days = Math.floor(totalSeconds / 86400);
-  let hours = Math.floor((totalSeconds % 86400) / 3600);
-  let minutes = Math.floor((totalSeconds % 3600) / 60);
-  let seconds = totalSeconds % 60;
+  // Browser requires user interaction
+  document.body.addEventListener("click", startMusic, { once: true });
 
-  // Update the HTML elements
-  document.querySelector(".clock__main__day__digit").innerText = days;
-  document.querySelector(".clock__main__hour__digit").innerText = hours;
-  document.querySelector(".clock__main__min__digit").innerText = minutes;
-  document.querySelector(".clock__main__sec__digit").innerText = seconds;
+  // Auto play next song
+  audio.addEventListener("ended", playNextSong);
 }
 
-function returnRomanticSen(inputArray) {
-  const randomIndex = Math.floor(Math.random() * inputArray.length);
-  str_tag.innerHTML = romanticSentences[randomIndex];
+function startMusic() {
+  audio
+    .play()
+    .then(() => {
+      console.log("Music started");
+    })
+    .catch((err) => {
+      console.error("Playback failed:", err);
+    });
 }
 
-function playSong() {
+function playNextSong() {
   currentSongIndex++;
 
-  // If reached end of playlist, loop back to first song
   if (currentSongIndex >= playlist.length) {
     currentSongIndex = 0;
   }
 
   audio.src = playlist[currentSongIndex];
-  audio.play();
+
+  audio.play().catch((err) => {
+    console.error("Next song failed:", err);
+  });
+}
+
+// -------------------------------
+// FALLING HEARTS
+// -------------------------------
+
+function setupHearts() {
+  document.addEventListener("mousemove", (e) => {
+    const now = Date.now();
+
+    if (now - lastHeartTime > heartDelay) {
+      createHeart(e.clientX, e.clientY);
+      lastHeartTime = now;
+    }
+  });
+}
+
+function createHeart(x, y) {
+  const heart = document.createElement("div");
+
+  heart.innerHTML = "❤️";
+  heart.classList.add("heart-particle");
+
+  // Position
+  heart.style.left = x + "px";
+  heart.style.top = y + "px";
+
+  // Animation randomness
+  const randomX = (Math.random() - 0.5) * 60;
+  const randomY = 20 + Math.random() * 100;
+
+  heart.style.setProperty("--x-offset", randomX + "px");
+  heart.style.setProperty("--y-offset", randomY + "px");
+
+  // Random size
+  const size = 12 + Math.random() * 14;
+  heart.style.fontSize = size + "px";
+
+  document.body.appendChild(heart);
+
+  // Remove after animation
+  setTimeout(() => {
+    heart.remove();
+  }, 1200);
+}
+
+// -------------------------------
+// LOVE TIMER
+// -------------------------------
+
+function updateCountUp() {
+  // February 20 2026 - 19:40
+  const specialDate = new Date(2026, 1, 20, 19, 40, 0);
+
+  const now = new Date();
+
+  // Future protection
+  if (now < specialDate) {
+    setClockValues(0, 0, 0, 0);
+    return;
+  }
+
+  const diff = now - specialDate;
+
+  const totalSeconds = Math.floor(diff / 1000);
+
+  const days = Math.floor(totalSeconds / 86400);
+
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+  const seconds = totalSeconds % 60;
+
+  setClockValues(days, hours, minutes, seconds);
+}
+
+function setClockValues(days, hours, minutes, seconds) {
+  document.querySelector(".clock__main__day__digit").innerText = days;
+
+  document.querySelector(".clock__main__hour__digit").innerText = hours;
+
+  document.querySelector(".clock__main__min__digit").innerText = minutes;
+
+  document.querySelector(".clock__main__sec__digit").innerText = seconds;
+}
+
+// -------------------------------
+// RANDOM ROMANTIC SENTENCE
+// -------------------------------
+
+function showRandomSentence() {
+  if (!sentenceElement) return;
+
+  const randomIndex = Math.floor(Math.random() * romanticSentences.length);
+
+  sentenceElement.innerText = romanticSentences[randomIndex];
 }
