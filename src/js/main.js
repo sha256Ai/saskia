@@ -50,7 +50,7 @@ const romanticSentences = [
   "Jede Liebesgeschichte ist schön, aber unsere ist meine Lieblingsgeschichte.",
   "Du hattest mich bei 'Hallo' und hast mich seitdem nicht mehr losgelassen.",
 ];
-const playlist = ["/assets/songs/1.mp3", "assets/songs/2.mp3"];
+const playlist = ["saskia/assets/songs/1.mp3", "/saskia/assets/songs/2.mp3"];
 
 // Create falling hearts on mouse move
 document.addEventListener("mousemove", function (e) {
