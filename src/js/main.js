@@ -72,6 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Load first song
   audio.src = playlist[currentSongIndex];
+  audio.play();
 
   // When song ends, play next song
   audio.addEventListener("ended", playSong);
