@@ -1,4 +1,4 @@
-const playlist = ["https://github.com/sha256Ai/saskia/blob/main/assets/songs/1.mp3", "https://github.com/sha256Ai/saskia/blob/main/assets/songs/1.mp3"];
+const playlist = ["https://sha256ai.github.io/saskia/assets/songs/1.mp3", "https://sha256ai.github.io/saskia/assets/songs/2.mp3"];
 
 const romanticSentences = [
   "Guten Morgen, meine Schöne. Jeder Sonnenaufgang erinnert mich an dein Lächeln.",
